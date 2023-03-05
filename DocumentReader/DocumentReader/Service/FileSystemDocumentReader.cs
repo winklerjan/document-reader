@@ -11,7 +11,6 @@ namespace DocumentReader.Service
     {
         public string ReadFile(string path)
         {
-
             try
             {
                 using (FileStream sourceStream = File.Open(path, FileMode.Open))

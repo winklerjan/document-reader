@@ -12,15 +12,35 @@ namespace DocumentReader
         static void Main(string[] args)
         {
             Console.Write("Enter the name of the source file: ");
-            string sourceFileName = Console.ReadLine();
+            string? sourceFileName = Console.ReadLine();
             string sourceFilePath = Path.Combine("..\\..\\..\\SourceFiles", sourceFileName);
 
             Console.Write("Enter the name of the target file: ");
-            string targetFileName = Console.ReadLine();
+            string? targetFileName = Console.ReadLine();
             string targetFilePath = Path.Combine("..\\..\\..\\TargetFiles", targetFileName);
 
-            var fileReader = new FileSystemDocumentReader();
-            string input = fileReader.ReadFile(sourceFilePath);
+            IDocumentReader documentReader = null;
+
+            if (IsHttpSource(sourceFileName))
+            {
+                // TODO add logic for http source
+            }
+            else
+            {
+                documentReader = new FileSystemDocumentReader();
+            }
+
+            string? input = documentReader?.ReadFile(sourceFilePath);
+
+            Enum.FileExtension fileExtension = Helper.GetFileExtension(sourceFileName);
+
+            switch (fileExtension)
+            {
+                case Enum.FileExtension.XML:
+                    break;
+
+
+            }
 
             XDocument xdoc = XDocument.Parse(input);
 
@@ -39,6 +59,11 @@ namespace DocumentReader
                     sw.Write(serializedDoc);
                 }
             }
+        }
+
+        private static bool IsHttpSource(string path)
+        {
+            return path.StartsWith("http") || path.StartsWith("https");
         }
     }
 }
