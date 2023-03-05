@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DocumentReader.Service
 {
-    internal class FileSystemDocumentReader : IDocumentReader
+    public class FileSystemDocumentReader : IDocumentReader
     {
         public string ReadFile(string path)
         {
@@ -19,12 +19,18 @@ namespace DocumentReader.Service
                     return reader.ReadToEnd();
                 }
             }
+            catch (FileNotFoundException ex)
+            {
+                throw new FileNotFoundException(ex.Message);
+            }
+            catch (IOException ex)
+            {
+                throw new IOException(ex.Message);
+            }
             catch (Exception ex)
             {
-                // TODO throw more detailed exceptions
                 throw new Exception(ex.Message);
             }
-
         }
     }
 }

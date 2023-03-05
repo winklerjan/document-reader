@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DocumentReader.Service
 {
-    internal interface IDocumentConverter
+    public interface IDocumentConverter
     {
         string Serialize(Document document);
         Document Deserialize(string input);

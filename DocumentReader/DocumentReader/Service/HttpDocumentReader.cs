@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace DocumentReader.Service
 {
-    public interface IDocumentReader
+    public class HttpDocumentReader : IDocumentReader
     {
-        public string ReadFile(string path);
+        public string ReadFile(string path)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

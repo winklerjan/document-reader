@@ -9,7 +9,7 @@ using System.Xml.Linq;
 
 namespace DocumentReader.Service
 {
-    internal class XmlDocumentConverter : IDocumentConverter
+    public class XmlDocumentConverter : IDocumentConverter
     {
         public Document Deserialize(string input)
         {

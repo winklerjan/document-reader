@@ -1,22 +1,38 @@
 ﻿using DocumentReader.Service;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DocumentReader
 {
-    internal static class Helper
+    public static class Helper
     {
-        public static string GetFileFormat(string filename)
-        {
-            return new FileInfo(filename).Extension;
-        }
-
         public static bool IsHttpSource(string path)
         {
             return path.StartsWith("http") || path.StartsWith("https");
+        }
+
+        public static IDocumentConverter GetDocumentConverter(string format)
+        {
+            switch (format.ToLower())
+            {
+                case "xml": case ".xml": return new XmlDocumentConverter();
+                case "json": case ".json": return new JsonDocumentConverter();
+                default: throw new NotSupportedException($"Format {format} not supported.");
+            }
+        }
+
+        public static IDocumentReader GetStorage(string sourceFileName)
+        {
+            IDocumentReader documentReader = null;
+
+            if (Helper.IsHttpSource(sourceFileName))
+            {
+                documentReader = new HttpDocumentReader();
+            }
+            else
+            {
+                documentReader = new FileSystemDocumentReader();
+            }
+
+            return documentReader;
         }
     }
 }
