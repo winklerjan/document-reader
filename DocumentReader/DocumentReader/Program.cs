@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
 using DocumentReader.Model;
+using DocumentReader.Service;
 using Newtonsoft.Json;
 namespace DocumentReader
 {
@@ -18,20 +19,8 @@ namespace DocumentReader
             string targetFileName = Console.ReadLine();
             string targetFilePath = Path.Combine("..\\..\\..\\TargetFiles", targetFileName);
 
-            string input;
-
-            try
-            {
-                FileStream sourceStream = File.Open(sourceFilePath, FileMode.Open);
-                StreamReader reader = new StreamReader(sourceStream);
-                input = reader.ReadToEnd();
-                reader.Close();
-            }
-            catch (Exception ex)
-            {
-                // TODO throw more detailed exceptions
-                throw new Exception(ex.Message);
-            }
+            var fileReader = new FileSystemDocumentReader();
+            string input = fileReader.ReadFile(sourceFilePath);
 
             XDocument xdoc = XDocument.Parse(input);
 
