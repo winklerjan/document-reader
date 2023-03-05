@@ -21,17 +21,13 @@ namespace DocumentReader
 
         public static IDocumentReader GetStorage(string sourceFileName)
         {
-            IDocumentReader documentReader = null;
+            IDocumentReader documentReader;
 
             if (Helper.IsHttpSource(sourceFileName))
-            {
                 documentReader = new HttpDocumentReader();
-            }
             else
-            {
                 documentReader = new FileSystemDocumentReader();
-            }
-
+          
             return documentReader;
         }
     }
