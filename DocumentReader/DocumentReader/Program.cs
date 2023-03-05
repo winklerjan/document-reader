@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http.Headers;
 using System.Xml.Linq;
 using DocumentReader.Model;
 using DocumentReader.Service;
@@ -11,17 +12,28 @@ namespace DocumentReader
     {
         static void Main(string[] args)
         {
-            Console.Write("Enter the name of the source file: ");
-            string? sourceFileName = Console.ReadLine();
-            string sourceFilePath = Path.Combine("..\\..\\..\\SourceFiles", sourceFileName);
+            //Console.Write("Enter the location of the source file: ");
+            //string sourceFileLocation = Console.ReadLine();
+            //Console.Write("Enter the name of the source file: ");
+            //string sourceFileName = Console.ReadLine();
+            string sourceFileName = "xmlhahaha.xml";
+            string sourceFilePath = Path.Combine("C:\\Users\\jan\\Desktop\\xmlhahaha.xml");
+            //string sourceFilePath = Path.Combine(sourceFileLocation, sourceFileName);
 
-            Console.Write("Enter the name of the target file: ");
-            string? targetFileName = Console.ReadLine();
-            string targetFilePath = Path.Combine("..\\..\\..\\TargetFiles", targetFileName);
+            //Console.Write("Enter the location of the target file: ");
+            //string? targetFileLocation = Console.ReadLine();
+            //Console.Write("Enter the name of the target file: ");
+            //string targetFileName = Console.ReadLine();
+            //string targetFileName = "xmlhahaha.xml";
+            string targetFilePath = Path.Combine("C:\\Users\\jan\\Desktop\\json.json");
+            //string targetFilePath = Path.Combine(targetFileLocation, targetFileName);
+
+            Console.Write("Which format would you like to convert to? ");
+            string targetFileFormat = Console.ReadLine();
 
             IDocumentReader documentReader = null;
 
-            if (IsHttpSource(sourceFileName))
+            if (Helper.IsHttpSource(sourceFileName))
             {
                 // TODO add logic for http source
             }
@@ -30,40 +42,30 @@ namespace DocumentReader
                 documentReader = new FileSystemDocumentReader();
             }
 
-            string? input = documentReader?.ReadFile(sourceFilePath);
+            string input = documentReader.ReadFile(sourceFilePath);
+            string sourceFileFormat = new FileInfo(sourceFileName).Extension;
+            
+            IDocumentConverter fileConverter = Mapper.GetDocumentConverter(sourceFileFormat);
+            Document deserializedDoc = fileConverter.Deserialize(input);
 
-            Enum.FileExtension fileExtension = Helper.GetFileExtension(sourceFileName);
+            fileConverter = Mapper.GetDocumentConverter(targetFileFormat);
+            string serializedDoc = fileConverter.Serialize(deserializedDoc);
 
-            switch (fileExtension)
+            try
             {
-                case Enum.FileExtension.XML:
-                    break;
-
-
-            }
-
-            XDocument xdoc = XDocument.Parse(input);
-
-            string title = xdoc.Root.Element("title").Value;
-            string text = xdoc.Root.Element("text").Value;
-
-            var doc = new Document(title, text);
-
-            string serializedDoc = JsonConvert.SerializeObject(doc);
-
-            // TODO wrap in a try/catch statement
-            using (FileStream targetStream = File.Open(targetFilePath, FileMode.Create, FileAccess.Write))
-            {
-                using (var sw = new StreamWriter(targetStream))
+                using (FileStream targetStream = File.Open(targetFilePath, FileMode.Create, FileAccess.Write))
                 {
-                    sw.Write(serializedDoc);
+                    using (var sw = new StreamWriter(targetStream))
+                    {
+                        sw.Write(serializedDoc);
+                    }
                 }
             }
-        }
-
-        private static bool IsHttpSource(string path)
-        {
-            return path.StartsWith("http") || path.StartsWith("https");
+            catch (Exception e)
+            {
+                throw new Exception(e.ToString());
+            }
+            
         }
     }
 }

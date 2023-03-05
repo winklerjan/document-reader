@@ -11,6 +11,10 @@ namespace DocumentReader.Model
         public string Title { get; set; }
         public string Text { get; set; }
 
+        public Document()
+        {
+        }
+
         public Document(string title, string text)
         {
             Text = text;
